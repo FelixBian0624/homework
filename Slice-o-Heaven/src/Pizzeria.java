@@ -17,6 +17,9 @@ public class Pizzeria {
     public List<String> drinks;
     private String orderID;      
     private double orderTotal;   
+    private String specialPizza;
+    private String specialSide;
+    private double specialPrice;
 
     public Pizzeria() {
         this.storeName = "Slice-o-Heaven";
@@ -120,6 +123,50 @@ public class Pizzeria {
         System.out.println("Making a pizza with the following ingredients: " + String.join(", ", pizzaIngredients));
     }
 
+
+    public void processCardPayment(String cardNumber, String expiryDate, int cvv) {
+        int cardLength = cardNumber.length();
+        if (cardLength == 14) {
+            System.out.println("Card accepted");
+        } else {
+            System.out.println("Invalid card");
+            return;
+        }
+
+        int firstCardDigit = Integer.parseInt(cardNumber.substring(0, 1));
+        System.out.println("First digit of card: " + firstCardDigit);
+
+        String blacklistedNumber = "12345678901234"; 
+        if (cardNumber.equals(blacklistedNumber)) {
+            System.out.println("Card is blacklisted. Please use another card");
+            return; 
+        }
+
+        int lastFourDigits = Integer.parseInt(cardNumber.substring(cardNumber.length() - 4));
+        System.out.println("Last four digits: " + lastFourDigits);
+
+        StringBuilder cardNumberToDisplay = new StringBuilder(cardNumber);
+        for (int i = 1; i < cardLength - 4; i++) {
+            cardNumberToDisplay.setCharAt(i, '*');
+        }
+        System.out.println("Card number to display: " + cardNumberToDisplay.toString());
+    }
+
+    public void specialOfTheDay(String pizzaOfTheDay, String sideOfTheDay, double specialPrice) {
+        this.specialPizza = pizzaOfTheDay;
+        this.specialSide = sideOfTheDay;
+        this.specialPrice = specialPrice;
+
+        StringBuilder specialInfo = new StringBuilder();
+        specialInfo.append("Today's Special: ")
+                   .append(pizzaOfTheDay)
+                   .append(" with ")
+                   .append(sideOfTheDay)
+                   .append(" for $")
+                   .append(String.format("%.2f", specialPrice));
+        System.out.println(specialInfo.toString());
+    }
+
     public static void main(String[] args) {
         Pizzeria defaultPizzeria = new Pizzeria();
         System.out.println("测试默认构造方法：");
@@ -138,11 +185,16 @@ public class Pizzeria {
         System.out.println("\n测试 takeOrder 方法：");
         sliceOHeaven.makePizza();
         sliceOHeaven.displayReceipt();
+        System.out.println("\n测试信用卡支付：");
+        sliceOHeaven.processCardPayment("41234567890123", "12/26", 123);
 
         List<String> customIngredients = new ArrayList<>();
         customIngredients.add("Sausage");
         Pizzeria customPizzeria = new Pizzeria("SOH-999", customIngredients, 20.00);
         System.out.println("\n测试新构造方法：");
         customPizzeria.displayReceipt();
+
+        System.out.println("\n测试每日特价：");
+        sliceOHeaven.specialOfTheDay("Margherita Pizza", "Fries", 12.99);
     }
 }
